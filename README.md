@@ -8,7 +8,7 @@ alias pull='sh ~/.scripts/pull.sh'\
 alias push='sh ~/.scripts/push.sh'\
 alias copen='sh ~/.scripts/open.sh'\
 alias dbranch='sh ~/.scripts/delete_branch.sh'\
-alias commit='sh ~/.scripts/checkout.sh'\
+alias commit='sh ~/.scripts/checkout.sh'
 
 ## Checkout
 Run ```checkout``` in terminal and it will either switch to a branch if it exists or ask if you want to create a new branch with that name
