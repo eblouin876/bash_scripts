@@ -1,7 +1,7 @@
 # bash_scripts
 Useful bash scripts related to git. These must also be aliased in order to work. 
 
-#Aliases
+# Aliases:
 alias checkout='sh ~/.scripts/checkout.sh'
 alias update='sh ~/.scripts/update.sh'
 alias pull='sh ~/.scripts/pull.sh'
