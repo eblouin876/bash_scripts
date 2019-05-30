@@ -2,13 +2,13 @@
 Useful bash scripts related to git. These must also be aliased in order to work. 
 
 # Aliases:
-alias checkout='sh ~/.scripts/checkout.sh'
-alias update='sh ~/.scripts/update.sh'
-alias pull='sh ~/.scripts/pull.sh'
-alias push='sh ~/.scripts/push.sh'
-alias copen='sh ~/.scripts/open.sh'
-alias dbranch='sh ~/.scripts/delete_branch.sh'
-alias commit='sh ~/.scripts/checkout.sh'
+alias checkout='sh ~/.scripts/checkout.sh'\
+alias update='sh ~/.scripts/update.sh'\
+alias pull='sh ~/.scripts/pull.sh'\
+alias push='sh ~/.scripts/push.sh'\
+alias copen='sh ~/.scripts/open.sh'\
+alias dbranch='sh ~/.scripts/delete_branch.sh'\
+alias commit='sh ~/.scripts/checkout.sh'\
 
 ## Checkout
 Run ```checkout``` in terminal and it will either switch to a branch if it exists or ask if you want to create a new branch with that name
