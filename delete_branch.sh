@@ -18,6 +18,14 @@ elif [ "$DBRAN" == "beta" ];
 then
     echo "You can't delete beta!"
     return
+elif [ "$DBRAN" == "staging" ];
+then
+    echo "You can't delete staging!"
+    return
+elif [ "$DBRAN" == "production" ];
+then
+    echo "You can't delete production!"
+    return
 else
     git branch -D $DBRAN
 fi
