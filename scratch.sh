@@ -1,8 +1,31 @@
 #!/bin/bash
 
-source ~/.config/shipit
-echo "$email"
-echo "$oauth_token"
-pr_URL="test"
 
-curl -H "Content-Type: application/json"  -d "{\"number_or_url\":\"$pr_URL\", \"email\":\"$email\", \"stakc_id\":24}" --header "Authorization: Token token=\"$oauth_token\", email=\"$email\"" -X POST https://admin.optimal.com/api/v1/shipit/pull_requests
+function checkConfig() {
+    cd ~/.config
+    FILE="shipit"
+    if [[ -f "$FILE" ]]; then
+        source $FILE
+        if [[ ! -z "$email" ]]; then
+            if [[ ! -z "$oauth_token" ]]; then
+                return
+            fi
+        fi
+        read -p "Please enter your email associated with shipit" email
+        read -p "Please enter your oauth token associated with shipit" oauth_token
+        cat <<EOF > FILE
+email="$email"
+oauth_token="$oauth_token"
+EOF
+    else
+        touch shipit
+        read -p "Please enter your email associated with shipit: " email
+        read -p "Please enter your oauth token associated with shipit: " oauth_token
+        cat > shipit <<EOF 
+email="$email"
+oauth_token="$oauth_token"
+EOF
+fi
+}
+
+checkConfig

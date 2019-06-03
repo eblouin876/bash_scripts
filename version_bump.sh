@@ -19,9 +19,8 @@ function runGit() {
     then
         git commit -am "version bump"
         git push origin versionBump
-        hub pull-request --no-edit -b $BRANCH
-        # Hit shipit api and trigger an addition to 
-
+        source ~/.config/shipit
+        hub pull-request --no-edit -b master | ( read PR_URL; curl -H "Content-Type: application/json"  -d "{\"number_or_url\":\"$PR_URL\", \"email\":\"$email\", \"stack_id\":24}" --header "Authorization: Token token=\"$oauth_token\", email=\"$email\"" -X POST https://admin.optimal.com/api/v1/shipit/pull_requests )
         git checkout $BRANCH
         git branch -D versionBump
     else
@@ -30,6 +29,7 @@ function runGit() {
 }
 
 function bump() {
+    checkConfig
     read -p "Are you version bumping beta or master? (b/m): " MAST 
     if [ $MAST = "b" ];
         then

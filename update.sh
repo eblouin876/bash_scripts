@@ -19,7 +19,8 @@ if [ -z "$1" ];
         then
         git pull origin beta
         return
-    elif [ $BR == "master" ] || [ $BR == "m" ]
+    elif [ $BR == "master" ] || [ $BR == "m" ];
+        then
         git pull origin master
         return
     else
