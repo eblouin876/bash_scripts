@@ -1,44 +1,34 @@
 #!/usr/bin/env bash
 BRANCH="$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
-function update() {
-if [ -z "$1" ];
+
+if [[ -z $1 ]];
     then
-    if [ $BRANCH == "beta" ];
+    if [ "$BRANCH" == "beta" ];
         then
         git pull origin beta
-        return
-    fi
-    if [ $BRANCH == "master" ];
+    elif [ "$BRANCH" == "master" ];
         then
         git pull origin master
-        return
-    fi
-    echo "Would you like to update from beta or master? (b/m)"
-    read BR
-    if [ $BR == "beta" ] || [ $BR == "b" ];
-        then
-        git pull origin beta
-        return
-    elif [ $BR == "master" ] || [ $BR == "m" ];
-        then
-        git pull origin master
-        return
     else
-        echo "Invalid response. Exiting"
-        return
+        echo "Would you like to update from beta or master? (b/m)"
+        read BR
+        if [ "$BR" == "beta" ] || [ "$BR" == "b" ];
+            then
+            git pull origin beta
+        elif [ "$BR" == "master" ] || [ "$BR" == "m" ];
+            then
+            git pull origin master
+        else
+            echo "Invalid response. Exiting"
+        fi
     fi
 else 
     cd ~/work/$1
-    if [ $BRANCH == "beta" ];
+    BRANCH="$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
+    if [ "$BRANCH" == "beta" ];
         then
         git pull origin beta
-        return
-    fi
-    if [ $BRANCH == "master" ];
-        then
+    else [ "$BRANCH" == "master" ]
         git pull origin master
-        return
     fi
 fi
-}
-update

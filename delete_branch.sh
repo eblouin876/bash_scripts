@@ -27,6 +27,7 @@ then
     echo "You can't delete production!"
     return
 else
+    git push origin --delete $DBRAN
     git branch -D $DBRAN
 fi
 }
