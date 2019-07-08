@@ -1,34 +1,35 @@
 #!/usr/bin/env bash
-BRANCH="$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
 
-if [[ -z $1 ]];
-    then
-    if [ "$BRANCH" == "beta" ];
-        then
-        git pull origin beta
-    elif [ "$BRANCH" == "master" ];
-        then
-        git pull origin master
-    else
-        echo "Would you like to update from beta or master? (b/m)"
-        read BR
-        if [ "$BR" == "beta" ] || [ "$BR" == "b" ];
-            then
-            git pull origin beta
-        elif [ "$BR" == "master" ] || [ "$BR" == "m" ];
-            then
-            git pull origin master
-        else
-            echo "Invalid response. Exiting"
-        fi
-    fi
-else 
-    cd ~/work/$1
+if [[ -z "$1" ]];
+then
     BRANCH="$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
-    if [ "$BRANCH" == "beta" ];
+    if [[ -n "$BRANCH" ]];
+    then
+        git stash push -m "update_stash_$BRANCH"
+        git checkout master && git pull origin master
+        git checkout beta && git pull origin beta
+        git checkout staging && git pull origin staging
+        git checkout $BRANCH
+        STASH=$(git stash list --grep="update_stash_$BRANCH" | cut -d: -f1)
+        [[ -n "$STASH" ]] && git stash pop $STASH
+    fi
+    echo "\n"
+else 
+    if cd ~/work/$1; then
+        echo "$1"
+        BRANCH="$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
+        if [[ -n "$BRANCH" ]];
         then
-        git pull origin beta
-    else [ "$BRANCH" == "master" ]
-        git pull origin master
+            git stash push -m "update_stash_$1_$BRANCH"
+            git checkout master && git pull origin master
+            git checkout beta && git pull origin beta
+            git checkout staging && git pull origin staging
+            git checkout $BRANCH
+            STASH=$(git stash list --grep="update_stash_$1_$BRANCH" | cut -d: -f1)
+            [[ -n "$STASH" ]] && git stash pop $STASH
+        fi
+        echo "\n"
+    else
+        echo "You entered an invalid project name."
     fi
 fi
