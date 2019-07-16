@@ -39,13 +39,21 @@ function commit() {
     if [ -z "$1" ];
     then
         echo "Please leave a commit message!"
+    elif [ "$1" == "-a" ];
+    then
+        CM=""
+        for a in "${@:2}"
+            do
+            CM+="$a "
+            done
+        git commit -am "$BRANCH: $CM"
     else
         CM=""
         for a in "${@:1}"
             do 
             CM+="$a "
             done
-        git commit -am "$BRANCH: $CM"
+        git commit -m "$BRANCH: $CM"
     fi
 }
 
@@ -201,8 +209,7 @@ function copen() {
     then
         code ~/work
     else 
-        cd ~/work/$1
-        code .
+        code ~/work/$1
     fi
 }
 
