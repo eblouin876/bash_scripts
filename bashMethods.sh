@@ -129,10 +129,10 @@ function pull() {
     if [ -n "$BRANCH" ]; 
         then
         if [ -z "$1" ];
-            then
-                git pull origin $BRANCH
-            else 
-                git pull origin $1
+        then
+            git pull origin $BRANCH
+        else 
+            git pull origin $1
         fi
     fi
 }
@@ -224,4 +224,10 @@ function size() {
     else
         echo "$(( $(stat -f%z $1)/1000 )) kb"
     fi
+}
+
+function importDb() {
+    DATABASE="$1"
+    FILE="$2"
+    mysql -u root -p $DATABASE < $FILE
 }
