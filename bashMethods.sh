@@ -239,8 +239,9 @@ function status() {
 
 function gd() {
     BRANCH="$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
-    [[ -z "$1" ]] && git diff && return;
-    git diff remotes/origin/$1..$BRANCH
+    EXCLUDE="-- . :(exclude)Gemfile.lock :(exclude)yarn.lock"
+    [[ -z "$1" ]] && git diff $EXCLUDE && return;
+    git diff remotes/origin/$1..$BRANCH $EXCLUDE
 }
 
 function branches() {
