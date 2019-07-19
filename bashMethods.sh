@@ -50,7 +50,7 @@ function commit() {
     else
         CM=""
         for a in "${@:1}"
-            do 
+            do
             CM+="$a "
             done
         git commit -m "$BRANCH: $CM"
@@ -66,7 +66,7 @@ function stash() {
     else
         CM=""
         for a in "${@:1}"
-            do 
+            do
             CM+="$a "
             done
         git stash push -m "$CM"
@@ -76,19 +76,19 @@ function stash() {
 function checkout() {
     if [ -z "$1" ];
     then
-        git for-each-ref --format=$'%(refname) %09 %(authorname)' 
+        git for-each-ref --format=$'%(refname) %09 %(authorname)'
         read -p "Which branch would you like to checkout? " branch
         [[ -z $branch ]] ||  git checkout $branch || git checkout -b $branch
-    else 
+    else
         git checkout $1 || (
             echo "This branch does not exist, would you like to create it? y/n"
             read new
             if [ $new == "y" ];
-            then 
+            then
             git checkout -b $1
             fi
         )
-    fi 
+    fi
 }
 
 function dbranch() {
@@ -126,12 +126,12 @@ function dbranch() {
 
 function pull() {
     BRANCH="$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
-    if [ -n "$BRANCH" ]; 
+    if [ -n "$BRANCH" ];
         then
         if [ -z "$1" ];
         then
             git pull origin $BRANCH
-        else 
+        else
             git pull origin $1
         fi
     fi
@@ -143,7 +143,7 @@ function push() {
         if [ -z "$1" ];
             then
                 git push origin $BRANCH
-            else 
+            else
                 git push origin $1
         fi
     fi
@@ -164,7 +164,7 @@ function update() {
             [[ -n "$STASH" ]] && git stash pop $STASH
         fi
         echo ""
-    else 
+    else
         if cd ~/work/$1; then
             echo "$1"
             BRANCH="$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
@@ -210,7 +210,7 @@ function copen() {
     if [ -z "$1" ];
     then
         code ~/work
-    else 
+    else
         code ~/work/$1
     fi
 }
@@ -231,4 +231,58 @@ function importDb() {
     DATABASE="$1"
     FILE="$2"
     mysql -u root -p $DATABASE < $FILE
+}
+
+function status() {
+    clear
+    git status
+}
+
+function gd() {
+    clear
+    BRANCH="$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
+    [[ -z "$1" ]] && git diff && return;
+    git diff remotes/origin/$1..$BRANCH
+}
+
+function branches() {
+    git remote update origin --prune && git branch -av
+    clear
+    git remote update origin --prune && git branch -av
+}
+
+function drop() {
+    git stash &> /dev/null && git stash drop stash@{0} &> /dev/null
+}
+
+function master() {
+    git checkout master
+}
+
+# Will parse text between two flags and return it as a single string
+function parseFlagContent() {
+    POS=$1
+    ARR=("${@:2}")
+    POS=$((POS+1))
+    while [[ ! -z "${ARR[$POS]}" ]] && [[ ${ARR[$POS]} != "-"* ]] && [[ "${ARR[$POS]}" != "" ]]
+    do
+        [[ -z "$MSG" ]] && MSG="${ARR[$POS]}" || MSG="$MSG ${ARR[$POS]}"
+        POS=$((POS+1))
+    done
+    echo "$MSG"
+}
+
+# More here as a reminder
+function parseFlags() {
+    if [[ $@ ]]; then
+        parsedArr=()
+        arr=( "$@" )
+        for ((i=0; i< ${#arr[@]}; i++ )); do
+            var=${arr[i]}
+            if [[ $var == "-"* ]]; then
+                CONTENT="$(parseFlagContent $i $@)"
+            fi
+        done
+        echo ${parsedArr[1]}
+    fi
 }
