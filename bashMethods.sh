@@ -60,13 +60,12 @@ function commit() {
         if [[ -n "$MODIFIED" ]] && [[ -z "$STAGED" ]]; then
             for ((i=0; i< ${#MODIFIED[@]}; i++ )); do
                 FILE=${MODIFIED[i]}
-                cyan "$i: $FILE"
+                cyan "\t$i: $FILE"
             done
             SEL=($(prompt "Enter the numbers you wish to add for this commit separated by a space: "))
             if [[ -n "$SEL" ]]; then
                 for ((i=0; i< ${#SEL[@]}; i++ )); do
                     FILEADD=${MODIFIED[$((${SEL[i]}))]}
-                    echo "$FILEADD"
                     git add $FILEADD
                 done
             fi
@@ -81,8 +80,6 @@ function commit() {
 }
 
 function stash() {
-    BRANCH="$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
-
     if [ -z "$1" ];
     then
         git stash push
