@@ -234,20 +234,16 @@ function importDb() {
 }
 
 function status() {
-    clear
     git status
 }
 
 function gd() {
-    clear
     BRANCH="$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
     [[ -z "$1" ]] && git diff && return;
     git diff remotes/origin/$1..$BRANCH
 }
 
 function branches() {
-    git remote update origin --prune && git branch -av
-    clear
     git remote update origin --prune && git branch -av
 }
 
