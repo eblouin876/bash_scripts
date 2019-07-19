@@ -163,7 +163,7 @@ function update() {
             STASH=$(git stash list --grep="update_stash_$BRANCH" | cut -d: -f1)
             [[ -n "$STASH" ]] && git stash pop $STASH
         fi
-        echo -e "\n"
+        echo ""
     else 
         if cd ~/work/$1; then
             echo "$1"
@@ -178,7 +178,7 @@ function update() {
                 STASH=$(git stash list --grep="update_stash_$1_$BRANCH" | cut -d: -f1)
                 [[ -n "$STASH" ]] && git stash pop $STASH
             fi
-            echo -e "\n"
+            echo ""
         else
             echo "You entered an invalid project name."
         fi
@@ -189,7 +189,8 @@ function updateAll() {
     cd ~/work
     for d in */ ; do
         cd "$d"
-        echo -e "\n $d"
+        echo ""
+        echo "$d"
         BRANCH="$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
         if [[ -n "$BRANCH" ]];
         then
