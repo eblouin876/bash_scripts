@@ -43,18 +43,6 @@ function cyan() {
 
 function commit() {
     BRANCH="$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
-    MODIFIED=($(git status | grep '^\s*modified:' | cut -f 2- -d :))
-    if [[ -n "$MODIFIED" ]]; then
-        for ((i=0; i< ${#MODIFIED[@]}; i++ )); do
-            FILE=${MODIFIED[i]}
-            cyan "$i: $FILE"
-        done
-        FILES=($(prompt "Enter the numbers you wish to add for this commit separated by a space: "))
-        for ((i=0; i< ${#FILES[@]}; i++ )); do
-            FILE=${FILE[i]}
-            git add $FILE
-        done
-    fi
     if [ -z "$1" ];
     then
         echo "Please leave a commit message!"
@@ -67,6 +55,20 @@ function commit() {
             done
         git commit -am "$BRANCH: $CM"
     else
+        MODIFIED=($(git status | grep '^\s*modified:' | cut -f 2- -d :))
+        if [[ -n "$MODIFIED" ]]; then
+            for ((i=0; i< ${#MODIFIED[@]}; i++ )); do
+                FILE=${MODIFIED[i]}
+                cyan "$i: $FILE"
+            done
+            FILES=($(prompt "Enter the numbers you wish to add for this commit separated by a space: "))
+            if [[ -n "$FILES" ]]; then
+                for ((i=0; i< ${#FILES[@]}; i++ )); do
+                    FILE=${FILE[i]}
+                    git add $FILE
+                done
+            fi
+        fi
         CM=""
         for a in "${@:1}"
             do
