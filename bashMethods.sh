@@ -6,6 +6,7 @@ RED='\033[1;31m'
 GREEN='\033[1;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[1;34m'
+CYAN='\033[1;96m'
 NC='\033[0m'
 #========================
 
@@ -27,15 +28,33 @@ function warn() {
 function danger() {
     echo -e "${RED}$1${NC}"
 }
+
 # Use to print a message in green
 # success "SUCCESS MESSAGE"
 function success() {
     echo -e "${GREEN}$1${NC}"
 }
 
+# Use to print a message in green
+# success "SUCCESS MESSAGE"
+function cyan() {
+    echo -e "${CYAN}$1${NC}"
+}
+
 function commit() {
     BRANCH="$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
-
+    MODIFIED=($(git status | grep '^\s*modified:' | cut -f 2- -d :))
+    if [[ -n "$MODIFIED" ]]; then
+        for ((i=0; i< ${#MODIFIED[@]}; i++ )); do
+            FILE=${MODIFIED[i]}
+            cyan "$i: $FILE"
+        done
+        FILES=($(prompt "Enter the numbers you wish to add for this commit separated by a space: "))
+        for ((i=0; i< ${#FILES[@]}; i++ )); do
+            FILE=${FILE[i]}
+            git add $FILE
+        done
+    fi
     if [ -z "$1" ];
     then
         echo "Please leave a commit message!"
