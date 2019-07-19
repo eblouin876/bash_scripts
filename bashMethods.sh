@@ -55,9 +55,9 @@ function commit() {
             done
         git commit -am "$BRANCH: $CM"
     else
-        STAGED="$(git status | grep '^\s*modified:')"
+        STAGED="$(git status | grep 'Changes to be committed:')"
         MODIFIED=($(git status | grep '^\s*modified:' | cut -f 2- -d :))
-        if [[ -n "$MODIFIED" ]]; then
+        if [[ -n "$MODIFIED" ]] && [[ -z "$STAGED" ]]; then
             for ((i=0; i< ${#MODIFIED[@]}; i++ )); do
                 FILE=${MODIFIED[i]}
                 cyan "$i: $FILE"
