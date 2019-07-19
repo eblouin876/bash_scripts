@@ -61,11 +61,12 @@ function commit() {
                 FILE=${MODIFIED[i]}
                 cyan "$i: $FILE"
             done
-            FILES=($(prompt "Enter the numbers you wish to add for this commit separated by a space: "))
-            if [[ -n "$FILES" ]]; then
-                for ((i=0; i< ${#FILES[@]}; i++ )); do
-                    FILE=${FILE[i]}
-                    git add $FILE
+            SEL=($(prompt "Enter the numbers you wish to add for this commit separated by a space: "))
+            if [[ -n "$SEL" ]]; then
+                for ((i=0; i< ${#SEL[@]}; i++ )); do
+                    FILEADD=${MODIFIED[$((${SEL[i]}))]}
+                    echo "$FILEADD"
+                    git add $FILEADD
                 done
             fi
         fi
