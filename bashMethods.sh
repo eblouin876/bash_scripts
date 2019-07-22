@@ -62,6 +62,7 @@ function commit() {
     else
         STAGED="$(git status | grep 'Changes to be committed:')"
         MODIFIED=($(git status | grep '^\s*modified:' | cut -f 2- -d :))
+        MODIFIED+=($(git status | grep '^\s*deleted:' | cut -f 2- -d :))
         UNTRACKED=($(git status | grep -A99 Untracked | grep '^\s[a-z]' | tr -d "[:blank:]"))
         [[ -n "$UNTRACKED" ]] && ADDUNTR=($(prompt "You have untracted files. Do you wish to add them? (y/n)"))
         if [[ "$ADDUNTR" == "y" ]];
