@@ -41,6 +41,11 @@ function cyan() {
     echo -e "${CYAN}$1${NC}"
 }
 
+# Smart commit method
+# Takes a -a flag if you want to commit all tracked files (like git commit -am)
+# If there are staged changes it will commit those with the message provided
+# If there are no staged changes but modified files it will prompt you to select files to include in the commit
+# If there are no staged changes and only a single modified file, it will automatically stage that file and commit it
 function commit() {
     BRANCH="$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
     if [ -z "$1" ];
@@ -57,8 +62,24 @@ function commit() {
     else
         STAGED="$(git status | grep 'Changes to be committed:')"
         MODIFIED=($(git status | grep '^\s*modified:' | cut -f 2- -d :))
-        if [[ -n "$MODIFIED" ]] && [[ -z "$STAGED" ]]; then
-            for ((i=0; i< ${#MODIFIED[@]}; i++ )); do
+        UNTRACKED=($(git status | grep -A99 Untracked | grep '^\s[a-z]' | tr -d "[:blank:]"))
+        [[ -n "$UNTRACKED" ]] && ADDUNTR=($(prompt "You have untracted files. Do you wish to add them? (y/n)"))
+        if [[ "$ADDUNTR" == "y" ]];
+        then
+            for ((i=0; i < ${#UNTRACKED[@]}; i++ )); do
+                FILE=${UNTRACKED[i]}
+                cyan "\t$i: $FILE"
+            done
+            SEL=($(prompt "Enter the numbers you wish to add for this commit separated by a space: "))
+            if [[ -n "$SEL" ]]; then
+                for ((i=0; i< ${#SEL[@]}; i++ )); do
+                    FILEADD=${UNTRACKED[$((${SEL[i]}))]}
+                    git add $FILEADD
+                done
+            fi
+        fi
+        if [[ -n "$MODIFIED" ]] && [[ -z "$STAGED" ]] && [[ ${#MODIFIED[@]} > 1 ]]; then
+            for ((i=0; i < ${#MODIFIED[@]}; i++ )); do
                 FILE=${MODIFIED[i]}
                 cyan "\t$i: $FILE"
             done
@@ -69,6 +90,9 @@ function commit() {
                     git add $FILEADD
                 done
             fi
+        fi
+        if [[ -n "$MODIFIED" ]] && [[ -z "$STAGED" ]] && [[ ((${#MODIFIED[@]} == 1)) ]];then
+            git add ${MODIFIED[0]}
         fi
         CM=""
         for a in "${@:1}"
