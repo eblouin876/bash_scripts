@@ -46,6 +46,7 @@ function cyan() {
 # If there are staged changes it will commit those with the message provided
 # If there are no staged changes but modified files it will prompt you to select files to include in the commit
 # If there are no staged changes and only a single modified file, it will automatically stage that file and commit it
+# If there are untracked files, it will prompt asking if you want to add any of them.
 function commit() {
     BRANCH="$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
     if [ -z "$1" ];
@@ -79,7 +80,7 @@ function commit() {
                 done
             fi
         fi
-        if [[ -n "$MODIFIED" ]] && [[ -z "$STAGED" ]] && [[ ${#MODIFIED[@]} > 1 ]]; then
+        if [[ -n "$MODIFIED" ]] && [[ -z "$STAGED" ]] || [[ -n "$ADDUNTR" ]] && [[ ${#MODIFIED[@]} > 1 ]]; then
             for ((i=0; i < ${#MODIFIED[@]}; i++ )); do
                 FILE=${MODIFIED[i]}
                 cyan "\t$i: $FILE"
