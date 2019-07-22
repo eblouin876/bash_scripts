@@ -1,26 +1,19 @@
 #!/bin/bash
 
-#========================
-        #COLORS
+#======================== Colors ========================
 RED='\033[1;31m'
 GREEN='\033[1;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[1;34m'
 CYAN='\033[1;96m'
 NC='\033[0m'
-#========================
+#=========================================================
 
-# Use to print a message in blue and store the user response as a variable
-# VARIABLE=$(prompt "DESIRED PROMPT")
-function prompt() {
-    read -p "$(echo -e "${BLUE}$1${NC}")" msg
-    echo "$msg"
-}
-
-# Use to print a message in yellow
-# warn "WARNING MESSAGE"
-function warn() {
-    echo -e "${YELLOW}$1${NC}"
+#======================== Helpers ========================
+# Use to print a message in cyan
+# cyan "CYAN MESSAGE"
+function cyan() {
+    echo -e "${CYAN}$1${NC}"
 }
 
 # Use to print a message in red
@@ -29,16 +22,29 @@ function danger() {
     echo -e "${RED}$1${NC}"
 }
 
+# Use to print a message in blue and store the user response as a variable
+# VARIABLE=$(prompt "DESIRED PROMPT")
+function prompt() {
+    read -p "$(echo -e "${BLUE}$1${NC}")" msg
+    echo "$msg"
+}
+
 # Use to print a message in green
 # success "SUCCESS MESSAGE"
 function success() {
     echo -e "${GREEN}$1${NC}"
 }
 
-# Use to print a message in cyan
-# cyan "CYAN MESSAGE"
-function cyan() {
-    echo -e "${CYAN}$1${NC}"
+# Use to print a message in yellow
+# warn "WARNING MESSAGE"
+function warn() {
+    echo -e "${YELLOW}$1${NC}"
+}
+#================================================================
+
+# ======================== Main Mehthods ========================
+function branches() {
+    git remote update origin --prune && git branch -av
 }
 
 # Smart commit method
@@ -105,21 +111,6 @@ function commit() {
     fi
 }
 
-# Stashes all changes - will take a message from whatever was passed after stash
-function stash() {
-    if [ -z "$1" ];
-    then
-        git stash push
-    else
-        CM=""
-        for a in "${@:1}"
-            do
-            CM+="$a "
-            done
-        git stash push -m "$CM"
-    fi
-}
-
 function checkout() {
     if [ -z "$1" ];
     then
@@ -135,6 +126,30 @@ function checkout() {
             git checkout -b $1
             fi
         )
+    fi
+}
+
+function copen() {
+    if [ -z "$1" ];
+    then
+        code ~/work
+    else
+        code ~/work/$1
+    fi
+}
+
+# Stashes all changes - will take a message from whatever was passed after stash
+function stash() {
+    if [ -z "$1" ];
+    then
+        git stash push
+    else
+        CM=""
+        for a in "${@:1}"
+            do
+            CM+="$a "
+            done
+        git stash push -m "$CM"
     fi
 }
 
@@ -172,6 +187,58 @@ function dbranch() {
     fi
 }
 
+# Silently deletes any uncommitted changes
+function drop() {
+    git stash &> /dev/null && git stash drop stash@{0} &> /dev/null
+}
+
+# excludes gemfile.lock and yarn.lock
+function gd() {
+    BRANCH="$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
+    EXCLUDE="-- . :(exclude)Gemfile.lock :(exclude)yarn.lock"
+    [[ -z "$1" ]] && git diff $EXCLUDE && return;
+    git diff remotes/origin/$1..$BRANCH $EXCLUDE
+}
+
+# database name, file path
+function importDb() {
+    DATABASE="$1"
+    FILE="$2"
+    mysql -u root -p $DATABASE < $FILE
+}
+
+function master() {
+    git checkout master
+}
+
+# Will parse text between two flags and return it as a single string
+function parseFlagContent() {
+    POS=$1
+    ARR=("${@:2}")
+    POS=$((POS+1))
+    while [[ ! -z "${ARR[$POS]}" ]] && [[ ${ARR[$POS]} != "-"* ]] && [[ "${ARR[$POS]}" != "" ]]
+    do
+        [[ -z "$MSG" ]] && MSG="${ARR[$POS]}" || MSG="$MSG ${ARR[$POS]}"
+        POS=$((POS+1))
+    done
+    echo "$MSG"
+}
+
+# More here as a reminder
+function parseFlags() {
+    if [[ $@ ]]; then
+        parsedArr=()
+        arr=( "$@" )
+        for ((i=0; i< ${#arr[@]}; i++ )); do
+            var=${arr[i]}
+            if [[ $var == "-"* ]]; then
+                CONTENT="$(parseFlagContent $i $@)"
+            fi
+        done
+        echo ${parsedArr[1]}
+    fi
+}
+
 function pull() {
     BRANCH="$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
     if [ -n "$BRANCH" ];
@@ -195,6 +262,26 @@ function push() {
                 git push origin $1
         fi
     fi
+}
+
+function reload() {
+    . ~/.bashrc && . ~/.bash_profile
+}
+
+function size() {
+    if [ "$1" = "-m" ];
+    then
+        echo "$(( $(stat -f%z $2)/1000000 )) mb"
+    elif [ "$1" = "-k" ];
+    then
+        echo "$(( $(stat -f%z $2)/1000 )) kb"
+    else
+        echo "$(( $(stat -f%z $1)/1000 )) kb"
+    fi
+}
+
+function status() {
+    git status
 }
 
 function update() {
@@ -252,85 +339,4 @@ function updateAll() {
         fi
         cd ..
     done
-}
-
-function copen() {
-    if [ -z "$1" ];
-    then
-        code ~/work
-    else
-        code ~/work/$1
-    fi
-}
-
-function size() {
-    if [ "$1" = "-m" ];
-    then
-        echo "$(( $(stat -f%z $2)/1000000 )) mb"
-    elif [ "$1" = "-k" ];
-    then
-        echo "$(( $(stat -f%z $2)/1000 )) kb"
-    else
-        echo "$(( $(stat -f%z $1)/1000 )) kb"
-    fi
-}
-
-# database name, file path
-function importDb() {
-    DATABASE="$1"
-    FILE="$2"
-    mysql -u root -p $DATABASE < $FILE
-}
-
-function status() {
-    git status
-}
-
-# excludes gemfile.lock and yarn.lock
-function gd() {
-    BRANCH="$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
-    EXCLUDE="-- . :(exclude)Gemfile.lock :(exclude)yarn.lock"
-    [[ -z "$1" ]] && git diff $EXCLUDE && return;
-    git diff remotes/origin/$1..$BRANCH $EXCLUDE
-}
-
-function branches() {
-    git remote update origin --prune && git branch -av
-}
-
-# Silently deletes any uncommitted changes
-function drop() {
-    git stash &> /dev/null && git stash drop stash@{0} &> /dev/null
-}
-
-function master() {
-    git checkout master
-}
-
-# Will parse text between two flags and return it as a single string
-function parseFlagContent() {
-    POS=$1
-    ARR=("${@:2}")
-    POS=$((POS+1))
-    while [[ ! -z "${ARR[$POS]}" ]] && [[ ${ARR[$POS]} != "-"* ]] && [[ "${ARR[$POS]}" != "" ]]
-    do
-        [[ -z "$MSG" ]] && MSG="${ARR[$POS]}" || MSG="$MSG ${ARR[$POS]}"
-        POS=$((POS+1))
-    done
-    echo "$MSG"
-}
-
-# More here as a reminder
-function parseFlags() {
-    if [[ $@ ]]; then
-        parsedArr=()
-        arr=( "$@" )
-        for ((i=0; i< ${#arr[@]}; i++ )); do
-            var=${arr[i]}
-            if [[ $var == "-"* ]]; then
-                CONTENT="$(parseFlagContent $i $@)"
-            fi
-        done
-        echo ${parsedArr[1]}
-    fi
 }
