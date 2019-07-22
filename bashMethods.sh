@@ -67,7 +67,6 @@ function commit() {
             done
         git commit -am "$BRANCH: $CM"
     else
-        STAGED="$(git status | grep 'Changes to be committed:')"
         MODIFIED=($(git status | grep '^\s*modified:' | cut -f 2- -d :))
         MODIFIED+=($(git status | grep '^\s*deleted:' | cut -f 2- -d :))
         UNTRACKED=($(git status | grep -A99 Untracked | grep '^\s[a-z]' | tr -d "[:blank:]"))
@@ -86,6 +85,7 @@ function commit() {
                 done
             fi
         fi
+        STAGED="$(git status | grep 'Changes to be committed:')"
         if [[ -n "$MODIFIED" ]] && [[ -z "$STAGED" ]] && [[ ${#MODIFIED[@]} > 1 ]]; then
             for ((i=0; i < ${#MODIFIED[@]}; i++ )); do
                 FILE=${MODIFIED[i]}
