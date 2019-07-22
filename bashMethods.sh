@@ -35,8 +35,8 @@ function success() {
     echo -e "${GREEN}$1${NC}"
 }
 
-# Use to print a message in green
-# success "SUCCESS MESSAGE"
+# Use to print a message in cyan
+# cyan "CYAN MESSAGE"
 function cyan() {
     echo -e "${CYAN}$1${NC}"
 }
@@ -65,7 +65,7 @@ function commit() {
         MODIFIED=($(git status | grep '^\s*modified:' | cut -f 2- -d :))
         MODIFIED+=($(git status | grep '^\s*deleted:' | cut -f 2- -d :))
         UNTRACKED=($(git status | grep -A99 Untracked | grep '^\s[a-z]' | tr -d "[:blank:]"))
-        [[ -n "$UNTRACKED" ]] && ADDUNTR=($(prompt "You have untracted files. Do you wish to add them? (y/n)"))
+        [[ -n "$UNTRACKED" ]] && ADDUNTR=($(prompt "You have untracted files. Do you wish to add them? (y/n): "))
         if [[ "$ADDUNTR" == "y" ]];
         then
             for ((i=0; i < ${#UNTRACKED[@]}; i++ )); do
@@ -80,7 +80,7 @@ function commit() {
                 done
             fi
         fi
-        if [[ -n "$MODIFIED" ]] && [[ -z "$STAGED" ]] || [[ -n "$ADDUNTR" ]] && [[ ${#MODIFIED[@]} > 1 ]]; then
+        if [[ -n "$MODIFIED" ]] && [[ -z "$STAGED" ]] && [[ ${#MODIFIED[@]} > 1 ]]; then
             for ((i=0; i < ${#MODIFIED[@]}; i++ )); do
                 FILE=${MODIFIED[i]}
                 cyan "\t$i: $FILE"
@@ -105,6 +105,7 @@ function commit() {
     fi
 }
 
+# Stashes all changes - will take a message from whatever was passed after stash
 function stash() {
     if [ -z "$1" ];
     then
@@ -137,6 +138,7 @@ function checkout() {
     fi
 }
 
+# Deletes a branch AND its remote repository
 function dbranch() {
     BRANCH="$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
     DBRAN="$1"
@@ -273,6 +275,7 @@ function size() {
     fi
 }
 
+# database name, file path
 function importDb() {
     DATABASE="$1"
     FILE="$2"
@@ -283,6 +286,7 @@ function status() {
     git status
 }
 
+# excludes gemfile.lock and yarn.lock
 function gd() {
     BRANCH="$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
     EXCLUDE="-- . :(exclude)Gemfile.lock :(exclude)yarn.lock"
@@ -294,6 +298,7 @@ function branches() {
     git remote update origin --prune && git branch -av
 }
 
+# Silently deletes any uncommitted changes
 function drop() {
     git stash &> /dev/null && git stash drop stash@{0} &> /dev/null
 }
