@@ -1,4 +1,8 @@
 #!/bin/bash
+#======================== Import ========================
+. .env
+
+#========================================================
 
 #======================== Colors ========================
 RED='\033[1;31m'
@@ -340,4 +344,14 @@ function updateAll() {
         fi
         cd ..
     done
+}
+
+function updateAdminLogin(){
+    cd ~/work/guide
+    rails runner "
+    e = User.where(email: '$email').first
+    e.password = '$adminpass'
+    e.password_confirmation = '$adminpass'
+    e.save
+    "
 }
