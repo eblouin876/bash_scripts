@@ -347,6 +347,7 @@ function updateAll() {
 }
 
 function updateAdminLogin(){
+    DIR=${PWD}
     cd ~/work/guide
     rails runner "
     e = User.where(email: '$email').first
@@ -354,4 +355,5 @@ function updateAdminLogin(){
     e.password_confirmation = '$adminpass'
     e.save
     "
+    cd DIR
 }
