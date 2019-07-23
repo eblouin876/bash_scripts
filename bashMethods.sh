@@ -54,6 +54,7 @@ function branches() {
 # If there are no staged changes and only a single modified file, it will automatically stage that file and commit it
 # If there are untracked files, it will prompt asking if you want to add any of them.
 function commit() {
+    ADDUNTR=""
     BRANCH="$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
     if [ -z "$1" ];
     then
