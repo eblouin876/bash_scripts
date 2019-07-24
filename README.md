@@ -52,7 +52,7 @@ This method runs update for all the projects in your ~/work directory. Run ```up
 
 ## ~/.bash_profile
 ```
-[[ -f ~/.scripts/bashMethods.sh ]] && source ~/.scripts/bashMethods.sh
+[[ -f ~/.scripts/bashMethods.sh ]] && source path/to/bashMethods.sh
 
 if [ -f "$(brew --prefix)/opt/bash-git-prompt/share/gitprompt.sh" ]; then
   __GIT_PROMPT_DIR=$(brew --prefix)/opt/bash-git-prompt/share
