@@ -8,7 +8,7 @@ Create a .env file in the same directory that includes email="", pass="", and ad
 Run ```checkout``` in terminal and it will either switch to a branch if it exists or ask if you want to create a new branch with that name
 
 ## Commit
-Run ```commit``` in terminal and it will capture all text after and put it in as your commit message. (No quotes necessary) Takes a -a flag if you want to commit all tracked files (like git commit -am). If there are staged changes it will commit those with the message provided. If there are no staged changes but modified files it will prompt you to select files to include in the commit. If there are no staged changes and only a single modified file, it will automatically stage that file and commit it. If there are untracked files, it will prompt asking if you want to add any of them to commit.
+Run ```commit``` in terminal and it will capture all text after and put it in as your commit message prefixed with the branch that you are working on. (No quotes necessary) Takes a -a flag if you want to commit all tracked files (like git commit -am). If there are staged changes it will commit those with the message provided. If there are no staged changes but modified files it will prompt you to select files to include in the commit. If there are no staged changes and only a single modified file, it will automatically stage that file and commit it. If there are untracked files, it will prompt asking if you want to add any of them to commit.
 
 ## Delete Branch
 Run ```dbranch <branch-name>``` in terminal and it will capture the branch name passed in and delete it as well as the remote repository for that branch. This will throw an error if you try to delete the branch you are on, master, beta, staging, or production.
