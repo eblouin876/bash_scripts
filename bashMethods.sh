@@ -343,5 +343,5 @@ function updateAdminLogin(){
     e.password_confirmation = '$adminpass'
     e.save
     "
-    cd DIR
+    cd $DIR
 }
