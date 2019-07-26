@@ -334,7 +334,7 @@ function updateAll() {
     done
 }
 
-function updateAdminLogin(){
+function updateAdminLogin() {
     DIR=${PWD}
     cd ~/work/guide
     rails runner "
@@ -344,4 +344,12 @@ function updateAdminLogin(){
     e.save
     "
     cd $DIR
+}
+
+function sslack() {
+    # CHANNEL="DJNKJKNR2"
+    MSGBODY="Testing Something"
+    curl -X POST -H "Authorization: Bearer $slackapitoken" \
+    -H 'Content-type: application/json; charset=utf-8' \
+    --data "{\"channel\": \"$CHANNEL\", \"as_user\": \"true\", \"text\": \"$MSGBODY\"}" https://slack.com/api/chat.postMessage
 }
