@@ -345,3 +345,24 @@ function updateAdminLogin() {
     "
     cd $DIR
 }
+
+function changeEncoding() {
+    CONVFILE="$1"
+    FROM="$2"
+    TO="$3"
+    iconv -f $FROM -t $TO $CONVFILE > $CONVFILE.tmp
+    rm $CONVFILE
+    mv $CONVFILE.tmp $CONVFILE
+}
+
+function sidekiqReset() {
+    DIR=${PWD}
+    cd ~/work/guide
+    rails runner "
+    Sidekiq::Queue.all.each(&:clear)
+    Sidekiq::RetrySet.new.clear
+    Sidekiq::ScheduledSet.new.clear
+    Sidekiq::DeadSet.new.clear
+    "
+    cd $DIR
+}
