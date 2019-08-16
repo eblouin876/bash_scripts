@@ -51,6 +51,10 @@ function branches() {
     git remote update origin --prune && git branch -av
 }
 
+function branch() {
+    echo "$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
+}
+
 # Smart commit method
 # Takes a -a flag if you want to commit all tracked files (like git commit -am)
 # If there are staged changes it will commit those with the message provided
