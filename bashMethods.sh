@@ -44,15 +44,16 @@ function success() {
 function warn() {
     echo -e "${YELLOW}$1${NC}"
 }
+
+function branch() {
+    echo "$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
+}
+
 #================================================================
 
 # ======================== Main Mehthods ========================
 function branches() {
     git remote update origin --prune && git branch -av
-}
-
-function branch() {
-    echo "$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
 }
 
 # Smart commit method
@@ -63,7 +64,7 @@ function branch() {
 # If there are untracked files, it will prompt asking if you want to add any of them.
 function commit() {
     ADDUNTR=""
-    BRANCH="$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
+    BRANCH="$(branch)"
     if [ -z "$1" ];
     then
         echo "Please leave a commit message!"
@@ -164,7 +165,7 @@ function stash() {
 
 # Deletes a branch AND its remote repository
 function dbranch() {
-    BRANCH="$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
+    BRANCH="$(branch)"
     DBRAN="$1"
     if [ -z $DBRAN ];
     then
@@ -203,7 +204,7 @@ function drop() {
 
 # excludes gemfile.lock and yarn.lock
 function gd() {
-    BRANCH="$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
+    BRANCH="$(branch)"
     EXCLUDE="-- . :(exclude)Gemfile.lock :(exclude)yarn.lock"
     [[ -z "$1" ]] && git diff $EXCLUDE && return;
     git diff remotes/origin/$1..$BRANCH $EXCLUDE
@@ -249,7 +250,7 @@ function parseFlags() {
 }
 
 function pull() {
-    BRANCH="$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
+    BRANCH="$(branch)"
     if [ -n "$BRANCH" ];
         then
         if [ -z "$1" ];
@@ -262,7 +263,7 @@ function pull() {
 }
 
 function push() {
-    BRANCH="$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
+    BRANCH="$(branch)"
     if [ -n "$BRANCH" ]; then
         if [ -z "$1" ];
             then
@@ -284,7 +285,7 @@ function status() {
 function update() {
     if [[ -z "$1" ]];
     then
-        BRANCH="$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
+        BRANCH="$(branch)"
         if [[ -n "$BRANCH" ]];
         then
             git stash push -m "update_stash_$BRANCH"
@@ -299,7 +300,7 @@ function update() {
     else
         if cd ~/work/$1; then
             echo "$1"
-            BRANCH="$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
+            BRANCH="$(branch)"
             if [[ -n "$BRANCH" ]];
             then
                 git stash push -m "update_stash_$1_$BRANCH"
@@ -323,7 +324,7 @@ function updateAll() {
         cd "$d"
         echo ""
         echo "$d"
-        BRANCH="$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
+        BRANCH="$(branch)"
         if [[ -n "$BRANCH" ]];
         then
             git stash push -m "update_stash_$1_$BRANCH"
