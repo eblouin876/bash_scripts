@@ -366,3 +366,8 @@ function sidekiqReset() {
     "
     cd $DIR
 }
+
+# Starts an android emulator
+function andStart() {
+    emulator -avd Nexus_5X_API_28
+}
