@@ -221,6 +221,10 @@ function master() {
     git checkout master
 }
 
+function ng() {
+    ngrok http --host-header=rewrite $1.test
+}
+
 # Will parse text between two flags and return it as a single string
 function parseFlagContent() {
     POS=$1
