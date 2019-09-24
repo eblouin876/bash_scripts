@@ -214,7 +214,7 @@ function gd() {
 function importDb() {
     DATABASE="$1"
     FILE="$2"
-    mysql -u root -p $DATABASE < $FILE
+    mysql -u root -p"$pass" --verbose $DATABASE < $FILE
 }
 
 function master() {
@@ -370,4 +370,12 @@ function sidekiqReset() {
     Sidekiq::DeadSet.new.clear
     "
     cd $DIR
+}
+
+function rlog() {
+    if [[ -n "$1" ]]; then
+        tail -f ~/work/$1/log/development.log
+    else
+        tail -f log/development.log
+    fi
 }
