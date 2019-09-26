@@ -379,3 +379,18 @@ function rlog() {
         tail -f log/development.log
     fi
 }
+
+
+_autocomplete_branches() {
+    cur=${COMP_WORDS[COMP_CWORD]}
+    words=$(git branch -a | tr -s ' ' | cut -d/ -f3 | cut -d* -f2)
+    COMPREPLY=($(compgen -W "$words" "${cur}"))
+}
+
+_autocomplete_projects() {
+    cur=${COMP_WORDS[COMP_CWORD]}
+    words=$(ls ~/work)
+    COMPREPLY=($(compgen -W "$words" "${cur}"))
+}
+complete -F _autocomplete_branches checkout pull dbranch
+complete -F _autocomplete_projects update copen
