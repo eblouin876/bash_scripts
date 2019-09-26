@@ -76,6 +76,15 @@ function commit() {
             CM+="$a "
             done
         git commit -am "$BRANCH: $CM"
+    elif [ "$1" == "-ap" ];
+    then
+        CM=""
+        for a in "${@:2}"
+            do
+            CM+="$a "
+            done
+        git commit -am "$BRANCH: $CM"
+        git push origin "$BRANCH"
     else
         MODIFIED=($(git status | grep '^\s*modified:' | cut -f 2- -d :))
         MODIFIED+=($(git status | grep '^\s*deleted:' | cut -f 2- -d :))
@@ -380,6 +389,9 @@ function rlog() {
     fi
 }
 
+#================================================================
+
+# ======================== Autocompletes ========================
 
 _autocomplete_branches() {
     cur=${COMP_WORDS[COMP_CWORD]}
