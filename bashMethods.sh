@@ -214,7 +214,7 @@ function gd() {
 function importDb() {
     DATABASE="$1"
     FILE="$2"
-    mysql -u root -p"$pass" --verbose $DATABASE < $FILE
+    mysql -u"root" -p"$pass" $DATABASE < $FILE
 }
 
 function master() {
@@ -392,5 +392,5 @@ _autocomplete_projects() {
     words=$(ls ~/work)
     COMPREPLY=($(compgen -W "$words" "${cur}"))
 }
-complete -F _autocomplete_branches checkout pull dbranch
+complete -F _autocomplete_branches checkout pull dbranch gd
 complete -F _autocomplete_projects update copen
