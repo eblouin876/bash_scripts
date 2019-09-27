@@ -414,4 +414,4 @@ _autocomplete_projects() {
     COMPREPLY=($(compgen -W "$words" "${cur}"))
 }
 complete -F _autocomplete_branches checkout pull dbranch gd
-complete -F _autocomplete_projects update copen opr
+complete -F _autocomplete_projects update copen
