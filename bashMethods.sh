@@ -85,6 +85,15 @@ function commit() {
             done
         git commit -am "$BRANCH: $CM"
         git push origin "$BRANCH"
+    elif [ "$1" == "-p" ];
+    then
+        CM=""
+        for a in "${@:2}"
+            do
+            CM+="$a "
+            done
+        git commit -m "$BRANCH: $CM"
+        git push origin "$BRANCH"
     else
         MODIFIED=($(git status | grep '^\s*modified:' | cut -f 2- -d :))
         MODIFIED+=($(git status | grep '^\s*deleted:' | cut -f 2- -d :))
@@ -405,4 +414,4 @@ _autocomplete_projects() {
     COMPREPLY=($(compgen -W "$words" "${cur}"))
 }
 complete -F _autocomplete_branches checkout pull dbranch gd
-complete -F _autocomplete_projects update copen
+complete -F _autocomplete_projects update copen opr
