@@ -44,6 +44,11 @@ function success() {
 function warn() {
     echo -e "${YELLOW}$1${NC}"
 }
+
+function branch() {
+    echo "$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
+}
+
 #================================================================
 
 # ======================== Main Mehthods ========================
@@ -59,7 +64,7 @@ function branches() {
 # If there are untracked files, it will prompt asking if you want to add any of them.
 function commit() {
     ADDUNTR=""
-    BRANCH="$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
+    BRANCH="$(branch)"
     if [ -z "$1" ];
     then
         echo "Please leave a commit message!"
@@ -71,6 +76,15 @@ function commit() {
             CM+="$a "
             done
         git commit -am "$BRANCH: $CM"
+    elif [ "$1" == "-ap" ];
+    then
+        CM=""
+        for a in "${@:2}"
+            do
+            CM+="$a "
+            done
+        git commit -am "$BRANCH: $CM"
+        git push origin "$BRANCH"
     else
         MODIFIED=($(git status | grep '^\s*modified:' | cut -f 2- -d :))
         MODIFIED+=($(git status | grep '^\s*deleted:' | cut -f 2- -d :))
@@ -160,7 +174,7 @@ function stash() {
 
 # Deletes a branch AND its remote repository
 function dbranch() {
-    BRANCH="$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
+    BRANCH="$(branch)"
     DBRAN="$1"
     if [ -z $DBRAN ];
     then
@@ -199,7 +213,7 @@ function drop() {
 
 # excludes gemfile.lock and yarn.lock
 function gd() {
-    BRANCH="$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
+    BRANCH="$(branch)"
     EXCLUDE="-- . :(exclude)Gemfile.lock :(exclude)yarn.lock"
     [[ -z "$1" ]] && git diff $EXCLUDE && return;
     git diff remotes/origin/$1..$BRANCH $EXCLUDE
@@ -209,7 +223,7 @@ function gd() {
 function importDb() {
     DATABASE="$1"
     FILE="$2"
-    mysql -u root -p $DATABASE < $FILE
+    mysql -u"root" -p"$pass" $DATABASE < $FILE
 }
 
 function master() {
@@ -245,7 +259,7 @@ function parseFlags() {
 }
 
 function pull() {
-    BRANCH="$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
+    BRANCH="$(branch)"
     if [ -n "$BRANCH" ];
         then
         if [ -z "$1" ];
@@ -258,7 +272,7 @@ function pull() {
 }
 
 function push() {
-    BRANCH="$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
+    BRANCH="$(branch)"
     if [ -n "$BRANCH" ]; then
         if [ -z "$1" ];
             then
@@ -280,7 +294,7 @@ function status() {
 function update() {
     if [[ -z "$1" ]];
     then
-        BRANCH="$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
+        BRANCH="$(branch)"
         if [[ -n "$BRANCH" ]];
         then
             git stash push -m "update_stash_$BRANCH"
@@ -295,7 +309,7 @@ function update() {
     else
         if cd ~/work/$1; then
             echo "$1"
-            BRANCH="$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
+            BRANCH="$(branch)"
             if [[ -n "$BRANCH" ]];
             then
                 git stash push -m "update_stash_$1_$BRANCH"
@@ -319,7 +333,7 @@ function updateAll() {
         cd "$d"
         echo ""
         echo "$d"
-        BRANCH="$(git branch 2>/dev/null | grep "\*" | colrm 1 2)"
+        BRANCH="$(branch)"
         if [[ -n "$BRANCH" ]];
         then
             git stash push -m "update_stash_$1_$BRANCH"
@@ -371,3 +385,28 @@ function sidekiqReset() {
 function andStart() {
     emulator -avd Nexus_5X_API_28
 }
+function rlog() {
+    if [[ -n "$1" ]]; then
+        tail -f ~/work/$1/log/development.log
+    else
+        tail -f log/development.log
+    fi
+}
+
+#================================================================
+
+# ======================== Autocompletes ========================
+
+_autocomplete_branches() {
+    cur=${COMP_WORDS[COMP_CWORD]}
+    words=$(git branch -a | tr -s ' ' | cut -d/ -f3 | cut -d* -f2)
+    COMPREPLY=($(compgen -W "$words" "${cur}"))
+}
+
+_autocomplete_projects() {
+    cur=${COMP_WORDS[COMP_CWORD]}
+    words=$(ls ~/work)
+    COMPREPLY=($(compgen -W "$words" "${cur}"))
+}
+complete -F _autocomplete_branches checkout pull dbranch gd
+complete -F _autocomplete_projects update copen
