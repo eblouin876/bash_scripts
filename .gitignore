@@ -1,3 +1,4 @@
 .env
 scratch.sh
 hash.js
+checker.js

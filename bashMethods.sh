@@ -1,6 +1,5 @@
 #!/bin/bash
 #======================== Import ========================
-. ~/.scripts/.env
 
 #========================================================
 
@@ -230,6 +229,7 @@ function gd() {
 
 # database name, file path
 function importDb() {
+    . ~/.scripts/.env
     DATABASE="$1"
     FILE="$2"
     mysql -u"root" -p"$pass" $DATABASE < $FILE
@@ -358,6 +358,7 @@ function updateAll() {
 }
 
 function updateAdminLogin() {
+    . ~/.scripts/.env
     DIR=${PWD}
     cd ~/work/guide
     rails runner "
@@ -396,6 +397,12 @@ function rlog() {
     else
         tail -f log/development.log
     fi
+}
+
+function pumaReset() {
+    local PROJ=${PWD##*/}
+    rm ~/.puma-dev/${PROJ}
+    puma-dev link
 }
 
 #================================================================
